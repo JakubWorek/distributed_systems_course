@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generuj Wykres</title>
+</head>
+<body>
+    <h1>Generuj Wykres Cen Kryptowalut</h1>
+    <form action="/chart" method="post">
+        <label for="crypto">Kryptowaluta:</label>
+        <select name="crypto" id="crypto">
+            {% for crypto in cryptos %}
+                <option value="{{ crypto }}">{{ crypto }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="exchange">Giełda:</label>
+        <select name="exchange" id="exchange">
+            {% for exchange in exchanges %}
+                <option value="{{ exchange }}">{{ exchange }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="period">Okres:</label>
+        <select name="period" id="period">
+            <option value="1d">1 dzień</option>
+            <option value="1w">1 tydzień</option>
+            <option value="1m">1 miesiąc</option>
+        </select><br><br>
+
+        <button type="submit">Generuj Wykres</button>
+    </form>
+    <hr>
+    <a href="/">Wróć do porównywarki</a>
+</body>
+</html>

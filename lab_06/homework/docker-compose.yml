@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq_server
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  base_app: &base_app_config
+    build: .
+    working_dir: /app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+  ekipa1:
+    <<: *base_app_config
+    container_name: ekipa_1
+    command: python ekipa.py Ekipa1
+
+  ekipa2:
+    <<: *base_app_config
+    container_name: ekipa_2
+    command: python ekipa.py Ekipa2
+
+  dostawca1:
+    <<: *base_app_config
+    container_name: dostawca_1
+    command: python dostawca.py Dostawca1 tlen buty
+
+  dostawca2:
+    <<: *base_app_config
+    container_name: dostawca_2
+    command: python dostawca.py Dostawca2 tlen plecak
+
+  administrator:
+    <<: *base_app_config
+    container_name: administrator_app
+    command: python administrator.py --autorun
+
+networks:
+  default:
+    driver: bridge

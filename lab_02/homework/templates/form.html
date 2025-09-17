@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Porównywarka Cen Kryptowalut</title>
+</head>
+<body>
+    <h1>Porównywarka Cen Kryptowalut</h1>
+    <form action="/compare" method="post">
+        <label for="crypto">Kryptowaluta:</label>
+        <select name="crypto" id="crypto">
+            {% for crypto in cryptos %}
+                <option value="{{ crypto }}">{{ crypto }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="exchange1">Giełda 1:</label>
+        <select name="exchange1" id="exchange1">
+            {% for exchange in exchanges %}
+                <option value="{{ exchange }}">{{ exchange }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="exchange2">Giełda 2:</label>
+        <select name="exchange2" id="exchange2">
+            {% for exchange in exchanges %}
+                <option value="{{ exchange }}">{{ exchange }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Porównaj</button>
+    </form>
+    <hr>
+    <a href="/chart">Generuj Wykres</a>
+</body>
+</html>

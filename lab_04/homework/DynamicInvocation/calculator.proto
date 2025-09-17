@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.calculator.grpc";
+
+package calculator;
+
+
+service Calculator {
+  rpc Add (AddRequest) returns (AddResponse) {}
+
+  rpc Sub (SubRequest) returns (SubResponse) {}
+
+  rpc Mul (MulRequest) returns (MulResponse) {}
+
+  rpc Div (DivRequest) returns (DivResponse) {}
+
+  rpc Sum (SumRequest) returns (SumResponse) {}
+
+  rpc PrimeNumbers (PrimeNumbersRequest) returns (PrimeNumbersResponse) {}
+
+  rpc StreamPrimeNumbers (PrimeNumbersRequest) returns (stream PrimeNumber) {}
+
+  rpc CountPrimeNumbers (stream PrimeNumber) returns (PrimeNumbersCount) {}
+}
+
+message AddRequest {
+  int32 addend_1 = 1;
+  int32 addend_2 = 2;
+}
+
+message AddResponse {
+  int64 sum = 1;
+}
+
+message SubRequest {
+  int32 minuend = 1;
+  int32 subtrahend = 2;
+}
+
+message SubResponse {
+  int64 difference = 1;
+}
+
+message MulRequest {
+  int32 multiplicand = 1;
+  int32 multiplier = 2;
+}
+
+message MulResponse {
+  int64 product = 1;
+}
+
+message DivRequest {
+  int32 dividend = 1;
+  int32 divisor = 2;
+}
+
+message DivResponse {
+  int64 quotient = 1;
+}
+
+message SumRequest {
+  repeated int32 addends = 1;
+}
+
+message SumResponse {
+  int64 sum = 1;
+}
+
+message PrimeNumbersRequest {
+  int32 start = 1;
+  int32 end = 2;
+}
+
+message PrimeNumbersResponse {
+  repeated int32 prime_numbers = 1;
+}
+
+message PrimeNumber {
+  int32 value = 1;
+}
+
+message PrimeNumbersCount {
+  int32 count = 1;
+}

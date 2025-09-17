@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  ray-head:
+    image: ${RAY_IMAGE}
+    container_name: ray-head-artifact-storage
+    hostname: ray-head
+    ports:
+      - "${DASHBOARDPORT}:${DASHBOARDPORT}"
+    env_file:
+      - .env
+    command: >
+      ray start --head
+      --port=${REDISPORT}
+      --ray-client-server-port=${HEADNODEPORT}
+      --dashboard-port=${DASHBOARDPORT}
+      --dashboard-host=0.0.0.0
+      --redis-password='${PASSWORD}'
+      --num-cpus=1
+      --block
+      --disable-usage-stats
+    shm_size: '2gb'
+    environment:
+      - RAY_DISABLE_USAGE_STATS=1
+
+  ray-worker:
+    image: ${RAY_IMAGE}
+    hostname: ray-worker-artifact-storage
+    depends_on:
+      - ray-head
+    env_file:
+      - .env
+    command: >
+      ray start
+      --address=ray-head:${REDISPORT}
+      --redis-password='${PASSWORD}'
+      --num-cpus=${NUM_CPU_WORKER}
+      --block
+      --disable-usage-stats
+    shm_size: '1gb'
+    deploy:
+      mode: replicated
+      replicas: ${NUM_WORKERS}
+    environment:
+      - RAY_DISABLE_USAGE_STATS=1
+
+  client:
+    build: .
+    container_name: artifact-storage-client
+    depends_on:
+      - ray-head
+    env_file:
+      - .env
+    command: >
+      sh -c "echo 'Waiting 20 seconds for Ray head/client server...' &&
+            sleep 20 &&
+            echo 'Starting Python client script...' &&
+            python distributed_artifact_storage.py"
+    environment:
+      - RAY_ADDRESS=ray://ray-head:${HEADNODEPORT}
+      - RAY_PASSWORD=${PASSWORD}
+      - PYTHONUNBUFFERED=1
+      - LOGLEVEL=INFO
+
+networks:
+  default:
+    driver: bridge
